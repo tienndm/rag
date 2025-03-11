@@ -41,15 +41,22 @@ class ChatRoles:
 
 @dataclass
 class CreateConversationModel:
+    id: str
     name: str
     userId: UUIDStr
 
 
 @dataclass
+class UpdateConversationModel:
+    id: str
+    name: str
+
+
+@dataclass
 class CreateChatsModel:
-    chatRoleId: int
     conversationId: UUIDStr
     message: str
+    chatRoleId: int
 
 
 @dataclass

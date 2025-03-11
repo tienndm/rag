@@ -28,12 +28,33 @@ async def createChat(
     asyncUnitOfWork: AbstractUnitOfWork, input: CreateChatsModel
 ) -> str:
     async with asyncUnitOfWork as auow:
-        await auow.ragRepo.createChat(data=input)
-    # TODO Generate answer
-    response = "Xin chào"
-    async with asyncUnitOfWork as auow:
-        data = CreateChatsModel(
-            chatRoleId=2, conversationId=input.conversationId, message=response
+        chats = await auow.ragRepo.getChats(conversationId=input.conversationId)
+        is_new_conversation = not chats
+
+        conversation_id = input.conversationId
+        if is_new_conversation:
+            conversation_id = await auow.ragRepo.createConversation(
+                CreateConversationModel(
+                    id=input.conversationId, name="New chat", userId=input.userId
+                )
+            )
+
+        user_message = CreateChatsModel(
+            chatRoleId=1, conversationId=conversation_id, message=input.message
         )
-        await auow.ragRepo.createChat(data)
+        await auow.ragRepo.createChat(data=user_message)
+
+        # TODO: Generate answer using a proper approach
+        response = "Xin chào"
+
+        ai_message = CreateChatsModel(
+            chatRoleId=2, conversationId=conversation_id, message=response
+        )
+        await auow.ragRepo.createChat(data=ai_message)
+
+        if is_new_conversation:
+            await auow.ragRepo.updateConversation(
+                data=UpdateConversationModel(id=conversation_id, name="Xin chào")
+            )
+
     return response

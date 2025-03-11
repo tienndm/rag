@@ -34,6 +34,10 @@ class AbstractRagRepository(ABC):
     @abstractmethod
     def createConversation(self, data: CreateConversationModel) -> UUIDStr:
         raise NotImplementedError
+    
+    @abstractmethod
+    def updateConversation(self, data: UpdateConversationModel):
+        raise NotImplementedError
 
     @abstractmethod
     def delete(self, id: UUIDStr):

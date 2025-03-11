@@ -27,8 +27,6 @@ class RelationalDBRagRepository(AbstractRagRepository):
             select(Conversation)
             .where(Conversation.user_id == userId)
             .options(
-                selectinload(Conversation.name),
-                selectinload(Conversation.user_id),
                 selectinload(Conversation.messages),
             )
         )
@@ -46,14 +44,12 @@ class RelationalDBRagRepository(AbstractRagRepository):
         stmt = (
             select(ChatMessage)
             .where(ChatMessage.conversation_id == conversationId)
-            .order_by(ChatMessage.created_at.desc())
+            .order_by(ChatMessage.id.desc())
         )
         if params:
             stmt = stmt.offset((params.page - 1) * params.size).limit(params.size)
         result = await self.session.execute(stmt)
         chats = result.scalars().all()
-        if not chats:
-            raise RagNotFound
         return list(map(ChatsMapper.ormToEntity, chats))
 
     async def createChat(self, data: CreateChatsModel) -> int:
@@ -68,22 +64,29 @@ class RelationalDBRagRepository(AbstractRagRepository):
         )
         result = await self.session.execute(stmt)
         return result.scalar_one()
-    
+
     async def createConversation(self, data: CreateConversationModel) -> UUIDStr:
         stmt = (
             insert(Conversation)
-            .values(
-                name=data.name,
-                user_id=data.userId
-            )
+            .values(id=data.id, name=data.name, user_id=data.userId)
             .returning(Conversation.id)
         )
         result = await self.session.execute(stmt)
         return result.scalar_one()
+
+    async def updateConversation(self, data: UpdateConversationModel):
+        if data.name is not None:
+            stmt = (
+                update(Conversation)
+                .where(Conversation.id == data.id)
+                .values(name=data.name)
+            )
+            result = await self.session.execute(stmt)
+            if result.rowcount == 0:
+                raise RagNotFound
 
     async def delete(self, data: DeleteModel):
         stmt = delete(Conversation).where(Conversation.id == data.conversationId)
         result = await self.session.execute(stmt)
         if result.rowcount == 0:
             raise RagNotFound
-

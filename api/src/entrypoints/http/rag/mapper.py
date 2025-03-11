@@ -8,7 +8,7 @@ class ChatResponseMapper:
     def entityToResponse(instance: ChatsModel) -> ChatResponse:
         return ChatResponse(
             id=instance.id,
-            chatRoleId=instance.chatRoleId,
+            chatRole=instance.chatRoleId,
             conversationId=instance.conversationId,
             messages=instance.message
         )

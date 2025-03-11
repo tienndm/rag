@@ -1,18 +1,16 @@
 """ORM models for RAG (Retrieval-Augmented Generation)."""
 
-from sqlalchemy import ForeignKey, Integer, String, TIMESTAMP, func, Index
+from sqlalchemy import ForeignKey, Integer, String, TIMESTAMP, Boolean, func, Index
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from datetime import datetime
 from typing import List
 
 from common.types import UUIDStr
 from common.utils import build_uuid4_str
-from repositories.relational_db.user.orm import User
 
 
 class Base(DeclarativeBase):
     """Base class for all ORM models."""
-
     pass
 
 
@@ -63,20 +61,17 @@ class Conversation(Base):
     __tablename__ = "conversation"
 
     id: Mapped[UUIDStr] = mapped_column(
-        "id", String(32), primary_key=True, nullable=False, default=build_uuid4_str
+        "id", String(32), primary_key=True, nullable=False
     )
     name: Mapped[str] = mapped_column("name", String(256), nullable=False)
-    user_id: Mapped[UUIDStr] = mapped_column(ForeignKey("user.id"), nullable=False)
+    user_id: Mapped[UUIDStr] = mapped_column("user_id", String(32))
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP, server_default=func.now(), nullable=False
     )
 
-    user: Mapped["User"] = relationship("User", back_populates="conversations")
     messages: Mapped[List["ChatMessage"]] = relationship(
         "ChatMessage", back_populates="conversation"
     )
-
-    __table_args__ = (Index("idx_conversation_user_id", "user_id"),)
 
 
 class Document(Base):

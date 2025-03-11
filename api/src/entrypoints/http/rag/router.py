@@ -44,7 +44,7 @@ def uploadPDF(file: UploadFile = File(...)):
 
 
 @router.post("/core")
-async def chat(input: ChatRequest) -> ChatResponse:
+async def chat(input: ChatRequest) -> str:
     """Handle Chat"""
     asyncUnitOfWork = injector.get(AbstractUnitOfWork)
     response = await chatUsecases.createChat(asyncUnitOfWork, input) 
