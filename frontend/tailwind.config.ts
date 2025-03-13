@@ -12,6 +12,7 @@ export default {
       fontFamily: {
         "ibm-plex-sans": ["IBM Plex Sans", "sans-serif"],
         "bebas-neue": ["var(--bebas-neue)"],
+        "ibm-plex-serif": ["var(--font-ibm-plex-serif)"],
       },
       colors: {
         background: "hsl(var(--background))",
@@ -97,9 +98,14 @@ export default {
         gray: {
           100: "#CBD5E1",
         },
+        black: {
+          1: "#00214F",
+          2: "#344054",
+        },
       },
       screens: {
         xs: "480px",
+        "2xl": "1440px"
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -108,6 +114,10 @@ export default {
       },
       backgroundImage: {
         pattern: "url('/images/pattern.webp')",
+        "bank-gradient": "linear-gradient(90deg, #565a5d 0%, #999ca0 100%)",
+        "gradient-mesh": "url('/icons/gradient-mesh.svg')",
+        "bank-green-gradient":
+          "linear-gradient(90deg, #01797A 0%, #489399 100%)",
       },
     },
   },

@@ -7,6 +7,7 @@ load_dotenv()
 # application name and version
 APP_NAME = os.environ.get("APP_NAME", "HEHE")
 APP_VERSION = os.getenv("APP_VERSION", "1.0.0")
+APP_DESCRIPTION = os.getenv("APP_DESCRIPTION", "HEHE")
 
 # enable/disable logging of SQL statements
 SQLALCHEMY_ECHO = os.environ.get("SQLALCHEMY_ECHO", "").lower() == 'true'

@@ -10,7 +10,7 @@ from entrypoints.extension import (
     addExceptionHandler as http_add_exception_handlers,
 )
 from entrypoints.http.rag.router import router as rag_http_router
-from settings import APP_NAME, APP_VERSION
+from settings import APP_NAME, APP_VERSION, APP_DESCRIPTION
 from settings.db import IS_RELATIONAL_DB, initializeDB
 
 
@@ -20,13 +20,24 @@ async def lifespan(app: FastAPI):
 
     if IS_RELATIONAL_DB:
         from repositories.relational_db.rag.orm import Base
-        kwargs = {'declarativeBase': Base}
+
+        kwargs = {"declarativeBase": Base}
+
+    from common.logging import SingletonLogger
+
+    logger = SingletonLogger.getLogger()
 
     await initializeDB(**kwargs)
     yield
 
 
-app = FastAPI(title=APP_NAME, version=APP_VERSION, lifespan=lifespan)
+app = FastAPI(
+    title=APP_NAME,
+    version=APP_VERSION,
+    description=APP_DESCRIPTION,
+    lifespan=lifespan,
+    openapi_prefix="/api/v1",
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -43,7 +54,11 @@ http_add_exception_handlers(app)
 @app.exception_handler(Exception)
 async def universalExceptionHandler(_, exc):
     return JSONResponse(
-        content={"code": 500, "description": {"error": f"{type(exc).__name__}: {exc}"}, 'data': {}},
+        content={
+            "code": 500,
+            "description": {"error": f"{type(exc).__name__}: {exc}"},
+            "data": {},
+        },
         status_code=500,
     )
 
@@ -54,9 +69,14 @@ async def root():
         {
             "code": 200,
             "description": "success",
-            "data": {"service": APP_NAME, "version": APP_VERSION},
+            "data": {
+                "service": APP_NAME,
+                "version": APP_VERSION,
+                "description": APP_DESCRIPTION,
+            },
         }
     )
 
+
 if __name__ == "__main__":
-    uvicorn.run(app, host='0.0.0.0', port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

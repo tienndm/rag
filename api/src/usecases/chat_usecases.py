@@ -1,9 +1,12 @@
-from typing import Any, Tuple
+from typing import Any, Tuple, Optional
 from common.utils import build_uuid4_str
 from common.types import UUIDStr
+from common.logging import SingletonLogger
 
 from di.unit_of_work import AbstractUnitOfWork
 from models.rag import *
+
+logger = SingletonLogger.getLogger()
 
 
 async def getConversations(
@@ -11,8 +14,17 @@ async def getConversations(
     userId: UUIDStr,
     params: Optional[GetConversationsParamsModel] = None,
 ) -> list[ConversationsModel]:
-    async with asyncUnitOfWork as auow:
-        return await auow.ragRepo.getConversation(userId=userId, params=params)
+    logger.info(
+        f"#chat_usecases.getConversations - get conversations - userId: {userId}, params: {params}"
+    )
+    try:
+        async with asyncUnitOfWork as auow:
+            return await auow.ragRepo.getConversation(userId=userId, params=params)
+    except Exception as e:
+        logger.error(
+            f"#chat_usecases.getConversations - get conversations - error: {str(e)}"
+        )
+        raise
 
 
 async def getChats(
@@ -20,41 +32,56 @@ async def getChats(
     conversationId: UUIDStr,
     params: Optional[GetChatsParamsModel] = None,
 ) -> list[ChatsModel]:
-    async with asyncUnitOfWork as auow:
-        return await auow.ragRepo.getChats(conversationId=conversationId, params=params)
+    logger.info(
+        f"#chat_usecases.getChats - get chats - conversationId: {conversationId}, params: {params}"
+    )
+    try:
+        async with asyncUnitOfWork as auow:
+            return await auow.ragRepo.getChats(
+                conversationId=conversationId, params=params
+            )
+    except Exception as e:
+        logger.error(f"#chat_usecases.getConversations - get chats - error: {str(e)}")
+        raise
 
 
 async def createChat(
     asyncUnitOfWork: AbstractUnitOfWork, input: CreateChatsModel
 ) -> str:
-    async with asyncUnitOfWork as auow:
-        chats = await auow.ragRepo.getChats(conversationId=input.conversationId)
-        is_new_conversation = not chats
+    logger.info(f"#chat_usecases.createChat - creat chat - input: {input}")
+    try:
+        async with asyncUnitOfWork as auow:
+            chats = await auow.ragRepo.getChats(conversationId=input.conversationId)
+            isNewConversation = not chats
 
-        conversation_id = input.conversationId
-        if is_new_conversation:
-            conversation_id = await auow.ragRepo.createConversation(
-                CreateConversationModel(
-                    id=input.conversationId, name="New chat", userId=input.userId
+            if isNewConversation:
+                conversationId = await auow.ragRepo.createConversation(
+                    CreateConversationModel(
+                        id=input.conversationId, name="New chat", userId=input.userId
+                    )
                 )
+            else:
+                conversationId = input.conversationId
+
+            userMessage = CreateChatsModel(
+                chatRoleId=1, conversationId=conversationId, message=input.message
             )
+            await auow.ragRepo.createChat(data=userMessage)
 
-        user_message = CreateChatsModel(
-            chatRoleId=1, conversationId=conversation_id, message=input.message
-        )
-        await auow.ragRepo.createChat(data=user_message)
+            # TODO: Generate answer using a proper approach
+            response = "Xin chào"
 
-        # TODO: Generate answer using a proper approach
-        response = "Xin chào"
-
-        ai_message = CreateChatsModel(
-            chatRoleId=2, conversationId=conversation_id, message=response
-        )
-        await auow.ragRepo.createChat(data=ai_message)
-
-        if is_new_conversation:
-            await auow.ragRepo.updateConversation(
-                data=UpdateConversationModel(id=conversation_id, name="Xin chào")
+            aiMessage = CreateChatsModel(
+                chatRoleId=2, conversationId=conversationId, message=response
             )
+            await auow.ragRepo.createChat(data=aiMessage)
 
-    return response
+            if isNewConversation:
+                await auow.ragRepo.updateConversation(
+                    data=UpdateConversationModel(id=conversationId, name="Xin chào")
+                )
+
+        return response
+    except Exception as e:
+        logger.error(f"#chat_usecases.createChat - create chat - error: {str(e)}")
+        raise

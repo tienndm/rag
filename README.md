@@ -1,26 +1,49 @@
-# 🚀 Drop-RAG API
+<div align="center">
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue)
-![Status](https://img.shields.io/badge/status-alpha-orange)
-![Python](https://img.shields.io/badge/python-3.8%2B-green)
+# 🌟 Drop-RAG API
+
+*A lightweight Retrieval-Augmented Generation API*
+
+[![Version](https://img.shields.io/badge/version-0.1.0-blue?style=for-the-badge)](https://github.com/tienndm/drop-rag)
+[![Status](https://img.shields.io/badge/status-alpha-orange?style=for-the-badge)](https://github.com/tienndm/drop-rag)
+[![Python](https://img.shields.io/badge/python-3.8%2B-green?style=for-the-badge&logo=python)](https://www.python.org/)
+
+</div>
+
+## 📑 Table of Contents
+
+- [📖 Overview](#-overview)
+- [✨ Features](#-features)
+- [🛠️ Installation](#️-installation)
+- [🚀 Quick Start](#-quick-start)
+- [📋 API Reference](#-api-reference)
+- [⚙️ Configuration](#️-configuration)
+- [🔍 Advanced Usage](#-advanced-usage)
+- [📊 Performance Considerations](#-performance-considerations)
+- [🤝 Contributing](#-contributing)
+- [📝 License](#-license)
+- [📬 Contact](#-contact)
 
 ## 📖 Overview
 
-Drop-RAG is a lightweight, easy-to-use Retrieval-Augmented Generation (RAG) API that enhances large language model outputs with relevant retrieved information. This API allows you to:
+**Drop-RAG** is a lightweight, easy-to-use Retrieval-Augmented Generation (RAG) API that enhances large language model outputs with relevant retrieved information.
 
-- Retrieve information from your document collection based on semantic similarity
-- Augment LLM responses with contextually relevant information
-- Create more accurate, factual, and context-aware AI responses
+> RAG combines the power of retrieval-based systems with generative AI to deliver more accurate and reliable results with reduced hallucination.
 
-RAG combines the power of retrieval-based systems with generative AI to deliver more accurate and reliable results with reduced hallucination.
+With Drop-RAG, you can:
+- 🔎 Retrieve information from your document collection based on semantic similarity
+- 🧠 Augment LLM responses with contextually relevant information
+- ✅ Create more accurate, factual, and context-aware AI responses
 
 ## ✨ Features
 
-- **Simple Integration**: Easy to integrate with existing LLM pipelines
-- **Flexible Document Ingestion**: Support for various document formats (PDF, TXT, DOCX, etc.)
-- **Customizable Retrieval**: Configure embedding models and retrieval parameters
-- **Efficient Indexing**: Fast retrieval through optimized vector storage
-- **API-first Design**: RESTful API architecture for easy integration
+| Feature | Description |
+|---------|-------------|
+| **📦 Simple Integration** | Easy to integrate with existing LLM pipelines |
+| **📄 Flexible Document Ingestion** | Support for various document formats (PDF, TXT, DOCX, etc.) |
+| **⚙️ Customizable Retrieval** | Configure embedding models and retrieval parameters |
+| **⚡ Efficient Indexing** | Fast retrieval through optimized vector storage |
+| **🔌 API-first Design** | RESTful API architecture for easy integration |
 
 ## 🛠️ Installation
 
@@ -84,12 +107,33 @@ print(response.json())
 
 ## 📋 API Reference
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/index` | POST | Add documents to the retrieval index |
-| `/query` | POST | Query the system with RAG |
-| `/health` | GET | Check API health status |
-| `/metrics` | GET | Get usage metrics and statistics |
+<table>
+  <tr>
+    <th>Endpoint</th>
+    <th>Method</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>/index</code></td>
+    <td><code>POST</code></td>
+    <td>Add documents to the retrieval index</td>
+  </tr>
+  <tr>
+    <td><code>/query</code></td>
+    <td><code>POST</code></td>
+    <td>Query the system with RAG</td>
+  </tr>
+  <tr>
+    <td><code>/health</code></td>
+    <td><code>GET</code></td>
+    <td>Check API health status</td>
+  </tr>
+  <tr>
+    <td><code>/metrics</code></td>
+    <td><code>GET</code></td>
+    <td>Get usage metrics and statistics</td>
+  </tr>
+</table>
 
 ## ⚙️ Configuration
 
@@ -128,9 +172,9 @@ batch_process(documents, batch_size=100)
 
 ## 📊 Performance Considerations
 
-- Index size scales linearly with document count
-- Query latency typically ranges from 50-200ms
-- Consider chunking strategy based on your document collection
+- **Scaling**: Index size scales linearly with document count
+- **Latency**: Query latency typically ranges from 50-200ms
+- **Optimization**: Consider chunking strategy based on your document collection
 
 ## 🤝 Contributing
 
@@ -152,4 +196,8 @@ For questions and feedback, please open an issue or contact the maintainers.
 
 ---
 
+<div align="center">
+
 Built with ❤️ by the Drop-RAG team
+
+</div>
